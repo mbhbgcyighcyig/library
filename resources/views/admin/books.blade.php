@@ -106,15 +106,15 @@ Daftar Buku ({{ $books->count() }} buku)
 @if($book->cover)
 
 <img src="{{ asset('storage/'.$book->cover) }}"
-     width="60"
-     height="80"
-     style="object-fit:cover;border-radius:8px;">
+     width="90"
+     height="120"
+     style="object-fit:cover;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">
 
 @else
 
-<span style="color:#999">
-Tidak ada
-</span>
+<div style="width:90px;height:120px;background:#e8edf2;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;text-align:center;">
+    <span>Tidak ada</span>
+</div>
 
 @endif
 
@@ -161,6 +161,10 @@ Habis
 </td>
 
 <td>
+
+<a href="{{ route('admin.books.edit', $book) }}" class="btn-primary" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;font-size:13px;margin-bottom:6px;">
+    <i class="fas fa-edit"></i> Edit
+</a>
 
 <form action="{{ route('admin.books.destroy',$book) }}"
 method="POST"

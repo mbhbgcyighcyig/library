@@ -46,4 +46,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the borrows for the user.
+     */
+    public function borrows()
+    {
+        return $this->hasMany(Borrow::class);
+    }
+
+    /**
+     * Get the reviews for the user.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Get the borrows approved by this user.
+     */
+    public function approvedBorrows()
+    {
+        return $this->hasMany(Borrow::class, 'approved_by');
+    }
 }

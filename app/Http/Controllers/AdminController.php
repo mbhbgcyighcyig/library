@@ -67,8 +67,16 @@ class AdminController extends Controller
             'publisher'      => 'required|string|max:255',
             'stock'          => 'required|integer|min:0',
             'published_year' => 'nullable|integer|min:1900|max:2099',
+            'cover'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
-        Book::create($request->only(['category_id', 'title', 'author', 'publisher', 'published_year', 'stock', 'summary', 'status']));
+
+        $data = $request->only(['category_id', 'title', 'author', 'publisher', 'published_year', 'stock', 'summary', 'status']);
+
+        if ($request->hasFile('cover')) {
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        Book::create($data);
         return back()->with('success', 'Buku berhasil ditambahkan.');
     }
 
@@ -83,13 +91,26 @@ class AdminController extends Controller
     public function updateBook(Request $request, Book $book)
     {
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'title'       => 'required|string|max:255',
-            'author'      => 'required|string|max:255',
-            'publisher'   => 'required|string|max:255',
-            'stock'       => 'required|integer|min:0',
+            'category_id'    => 'required|exists:categories,id',
+            'title'          => 'required|string|max:255',
+            'author'         => 'required|string|max:255',
+            'publisher'      => 'required|string|max:255',
+            'stock'          => 'required|integer|min:0',
+            'published_year' => 'nullable|integer|min:1900|max:2099',
+            'cover'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
-        $book->update($request->only(['category_id', 'title', 'author', 'publisher', 'published_year', 'stock', 'summary', 'status']));
+
+        $data = $request->only(['category_id', 'title', 'author', 'publisher', 'published_year', 'stock', 'summary', 'status']);
+
+        if ($request->hasFile('cover')) {
+            // Delete old cover if exists
+            if ($book->cover && \Storage::disk('public')->exists($book->cover)) {
+                \Storage::disk('public')->delete($book->cover);
+            }
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        $book->update($data);
         return redirect()->route('admin.books')->with('success', 'Buku berhasil diperbarui.');
     }
 
